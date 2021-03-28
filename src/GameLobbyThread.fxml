@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameLobbyThreadController">
+   <right>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #CACACA;" BorderPane.alignment="CENTER">
+         <children>
+            <TextField fx:id="messageLobbyTextField" layoutX="14.0" layoutY="361.0" onAction="#sendMessageOnAction" promptText="Type Message Here" />
+            <ImageView fx:id="sendMessageImageView" fitHeight="18.0" fitWidth="17.0" layoutX="169.0" layoutY="365.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/send-message-icon.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+   </right>
+   <left>
+      <AnchorPane prefHeight="400.0" prefWidth="401.0" style="-fx-background-color: #D77A7A;" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fx:id="startGameButton" fitHeight="46.0" fitWidth="152.0" layoutX="257.0" layoutY="340.0" onMouseClicked="#startGameOnAction" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/start-game-button.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="23.0" layoutY="25.0" prefHeight="38.0" prefWidth="208.0" text="Joined Players" textFill="#42fcff">
+               <font>
+                  <Font name="Comic Sans MS" size="30.0" />
+               </font>
+            </Label>
+            <Label layoutX="45.0" layoutY="95.0" text="Player1" />
+            <Label layoutX="45.0" layoutY="127.0" text="Player2" />
+            <Label layoutX="45.0" layoutY="157.0" text="Player3" />
+            <Label layoutX="45.0" layoutY="191.0" text="Player4" />
+            <Label layoutX="113.0" layoutY="95.0" text="Host" />
+            <Label fx:id="waitingTextPrompt" layoutX="146.0" layoutY="354.0" text="Waiting For Players..." />
+            <Label fx:id="gameCodeID" layoutX="146.0" layoutY="322.0" text="Game Code: " />
+            <ImageView fx:id="brexitButton" fitHeight="66.0" fitWidth="131.0" layoutX="2.0" layoutY="330.0" onMouseClicked="#brexitButtonOnAction" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/brexit-button-2.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+   </left>
+</BorderPane>
