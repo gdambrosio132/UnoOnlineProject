@@ -16,5 +16,6 @@
       </Label>
       <Button fx:id="joinGameButton" layoutX="274.0" layoutY="255.0" mnemonicParsing="false" onAction="#joinGameButtonOnAction" text="Enter" />
       <Label fx:id="invalidCodeText" layoutX="282.0" layoutY="224.0" textFill="RED" />
+      <Button fx:id="createGameButton" layoutX="254.0" layoutY="308.0" mnemonicParsing="false" onAction="#createGameButtonOnAction" text="Create Game" />
    </children>
 </AnchorPane>
