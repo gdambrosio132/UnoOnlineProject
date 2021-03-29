@@ -61,18 +61,25 @@ public class LoginController implements Initializable {
             Statement statement = connectionDB.createStatement();
             ResultSet queryResult = statement.executeQuery(verifyLogin);
 
+            //TODO: needs updating, it only checks to see if the id is equal to 1
+            //      update it so that we know it is in our database, I THINK
             while(queryResult.next()){
                 if (queryResult.getInt(1) == 1){
                     loginMessageLabel.setText("Congrats");
                     //TODO: go to the game code screen
+                    //      connect to other table to say that the user is online
                 } else {
                     loginMessageLabel.setText("invalid login");
                 }
             }
+
+            connectionDB.close();
         } catch (Exception e){
             e.printStackTrace();
             e.getCause();
         }
+
+
     }
 
     public void createAccountForm(){
