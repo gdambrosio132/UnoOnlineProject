@@ -1,6 +1,5 @@
 package Authentication.Backend;
 
-import Authentication.Backend.DatabaseConnection;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -83,6 +82,7 @@ public class RegisterController implements Initializable {
             statement.executeUpdate(insertToRegister);
             registrationMessageLabel.setText("User has been registered successfully!");
             //TODO: enter the wait condition here and go back to the login screen
+            connectionDB.close();
         } catch (Exception e){
             e.printStackTrace();
             e.getCause();
