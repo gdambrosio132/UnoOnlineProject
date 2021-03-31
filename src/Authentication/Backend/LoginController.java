@@ -1,6 +1,5 @@
 package Authentication.Backend;
 
-import Authentication.Backend.DatabaseConnection;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;

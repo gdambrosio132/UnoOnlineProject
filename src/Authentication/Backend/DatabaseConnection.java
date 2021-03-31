@@ -9,7 +9,7 @@ public class DatabaseConnection {
     public Connection getConnection(){
         String databaseName = "uno_db";
         String databaseUser = "root";
-        String databasePassword = "";
+        String databasePassword = ""; //TODO: remember to put in the password before launching the program
         String url = "jdbc:mysql://localhost:3306/" + databaseName;
 
         try {

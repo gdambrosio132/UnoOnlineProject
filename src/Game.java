@@ -3,6 +3,13 @@ import Objects.SpecialCard;
 
 import java.util.List;
 
+/*
+ * The point of this whole Game class is to establish the instructions of the game
+ * This means when the game starts on a thread, we utilize the methods within this class
+ * to start by calling the constructor
+ *
+ */
+
 public class Game {
     private CardDeck drawing = CardDeck.initializeDeck();
     //private CardDeck presentDeck = new CardDeck();
@@ -25,6 +32,7 @@ public class Game {
 
         Object firstCard = drawing.draw();
         //logically, we don't want the first card to be a wild card, so we keep picking until we see something regular
+        //TODO: Im not sure if SpecialCard.class will work, I need to check
         while (firstCard.equals(SpecialCard.class)){
             drawing.addCard(firstCard);
             firstCard = drawing.draw();
