@@ -3,6 +3,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -22,6 +23,10 @@ public class GameConnectionController {
     private TextField keyCodeTextField;
     @FXML
     private Label invalidCodeText;
+    @FXML
+    private Button joinGameButton;
+    @FXML
+    private Button createGameButton;
 
 
     public void joinGameButtonOnAction(ActionEvent event){
@@ -31,6 +36,8 @@ public class GameConnectionController {
             invalidCodeText.setText("Please enter in a Game Code to Join");
         } else {
             validateGameCode();
+            //TODO: establish game connection logic I think lol its late a night
+            Stage stage1 = (Stage) joinGameButton.getScene().getWindow();
         }
 
         invalidCodeText.setText("Invalid Game Code");
@@ -95,15 +102,22 @@ public class GameConnectionController {
 
 
             //TODO: at this point, we then insert the unique game code into the database
-            //      ALSO: Test to see if this is working
+            //      ALSO: Test to see if this is working - UPDATE: we got it to work as in
+            //      transfering to the new screen. Now work on sending information and also
+            //      delete information once a user exits so it doesn't stay forever
 
 
 
 
             Parent root = FXMLLoader.load(getClass().getResource("GameLobbyThread.fxml"));
             Stage gameLobbyStage = new Stage();
-            gameLobbyStage.setScene(new Scene(root, 520, 508));
+            gameLobbyStage.setScene(new Scene(root, 600, 400));
             gameLobbyStage.show();
+
+            //close current stage once other stage is open
+            Stage stage2 = (Stage) createGameButton.getScene().getWindow();
+            stage2.close();
+
 
             connectionDB.close();
         } catch (Exception e){

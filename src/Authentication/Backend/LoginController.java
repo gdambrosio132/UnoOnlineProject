@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -31,6 +32,10 @@ public class LoginController implements Initializable {
     private TextField usernameTextField;
     @FXML
     private PasswordField passwordTextField;
+    @FXML
+    private Button loginButton;
+
+    private boolean signInSuccess = false;
 
 
     @Override
@@ -44,6 +49,10 @@ public class LoginController implements Initializable {
         loginMessageLabel.setText("You try to login");
         if (usernameTextField.getText().isEmpty() == false && passwordTextField.getText().isEmpty() == false){
             validateLogin();
+            if (signInSuccess){
+                Stage stage = (Stage) loginButton.getScene().getWindow();
+                stage.close();
+            }
         } else {
             loginMessageLabel.setText("Please enter username and password");
         }
@@ -55,6 +64,7 @@ public class LoginController implements Initializable {
         Connection connectionDB = databaseConnection.getConnection();
 
         String verifyLogin = "SELECT count(1) FROM user_account WHERE username = '" + usernameTextField.getText() + "' AND password = '" + passwordTextField.getText() + "'";
+        String updateUserStatus = "UPDATE user_account SET visibility = 1 WHERE username = '" + usernameTextField.getText() + "'";
 
         try {
             Statement statement = connectionDB.createStatement();
@@ -62,11 +72,15 @@ public class LoginController implements Initializable {
 
             //TODO: needs updating, it only checks to see if the id is equal to 1
             //      update it so that we know it is in our database, I THINK
+            //      UPDATE: nvm it works regardless - now delete this to do
             while(queryResult.next()){
                 if (queryResult.getInt(1) == 1){
                     loginMessageLabel.setText("Congrats");
                     //TODO: go to the game code screen
                     //      connect to other table to say that the user is online
+                    signInSuccess = true;
+                    gameCodeScreen();
+
                 } else {
                     loginMessageLabel.setText("invalid login");
                 }
@@ -88,6 +102,18 @@ public class LoginController implements Initializable {
             //registerStage.initStyle(StageStyle.UNDECORATED); this eliminates the application borders
             registerStage.setScene(new Scene(root, 520, 508));
             registerStage.show();
+        } catch (Exception e){
+            e.printStackTrace();
+            e.getCause();
+        }
+    }
+
+    public void gameCodeScreen(){
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/KeyConnect.fxml"));
+            Stage gameCodeScreen = new Stage();
+            gameCodeScreen.setScene(new Scene(root, 600, 400));
+            gameCodeScreen.show();
         } catch (Exception e){
             e.printStackTrace();
             e.getCause();

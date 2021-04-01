@@ -82,8 +82,12 @@ public class RegisterController implements Initializable {
             statement.executeUpdate(insertToRegister);
             registrationMessageLabel.setText("User has been registered successfully!");
             //TODO: enter the wait condition here and go back to the login screen
+            //      possible call in the closeButtonOnAction so we don't have to do additional work
+            Stage stage = (Stage) closeButton.getScene().getWindow();
+            stage.close();
             connectionDB.close();
         } catch (Exception e){
+            registrationMessageLabel.setText("Failed to register, Try again!");
             e.printStackTrace();
             e.getCause();
         }

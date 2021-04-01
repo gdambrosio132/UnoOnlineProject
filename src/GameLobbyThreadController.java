@@ -9,6 +9,17 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/*
+ * TODO: Make this into a game thread. What does that mean, it means that
+ *       we need to grab the host users ip and set him up as the main server
+ *       thread host and then have other players connect to this.
+ *
+ * TODO: This is what might happen, we either create two instances of server-client
+ *       connection which involves writing some code for sockets in here and then
+ *       writing it again in the main base game. Setting up a server thread is top
+ *       priority for this point
+ */
+
 public class GameLobbyThreadController implements Initializable {
 
     @FXML
@@ -30,6 +41,10 @@ public class GameLobbyThreadController implements Initializable {
         File startGameButtonFile = new File("images/start-game-button.png");
         Image startGameButtonImage = new Image(startGameButtonFile.toURI().toString());
         startGameButton.setImage(startGameButtonImage);
+
+        File brexitButtonFile = new File("images/brexit-button-2.png");
+        Image brexitButtonImage = new Image(brexitButtonFile.toURI().toString());
+        brexitButton.setImage(brexitButtonImage);
     }
 
     public void startGameOnAction(){
@@ -45,6 +60,7 @@ public class GameLobbyThreadController implements Initializable {
     public void brexitButtonOnAction(){
         //TODO: when the button is pressed, we navigate back to the GameConnectionController.java screen and also we
         //      update the current Lobby state
-        //      Also, check to see if the owner leaves as well
+        //      Also, check to see if the owner leaves as well, this is important because if the host leaves, then the
+        //      game is over.
     }
 }
