@@ -14,8 +14,11 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -66,10 +69,10 @@ public class LoginController implements Initializable {
         String verifyLogin = "SELECT count(1) FROM user_account WHERE username = '" + usernameTextField.getText() + "' AND password = '" + passwordTextField.getText() + "'";
         String updateUserStatus = "UPDATE user_account SET visibility = 1 WHERE username = '" + usernameTextField.getText() + "'";
 
+        String ipUpdate = "";
         try {
             Statement statement = connectionDB.createStatement();
             ResultSet queryResult = statement.executeQuery(verifyLogin);
-
             //TODO: needs updating, it only checks to see if the id is equal to 1
             //      update it so that we know it is in our database, I THINK
             //      UPDATE: nvm it works regardless - now delete this to do
@@ -78,6 +81,10 @@ public class LoginController implements Initializable {
                     loginMessageLabel.setText("Congrats");
                     //TODO: go to the game code screen
                     //      connect to other table to say that the user is online
+                    //      This code has to be here just in case for exception handling
+                    String getIP = getIPAddress();
+                    ipUpdate = "UPDATE user_account SET user_ip = '" + getIP + "' WHERE username = '" + usernameTextField.getText() + "'";
+
                     signInSuccess = true;
                     gameCodeScreen();
 
@@ -85,6 +92,9 @@ public class LoginController implements Initializable {
                     loginMessageLabel.setText("invalid login");
                 }
             }
+
+            //Insert updates into database
+            statement.executeUpdate(ipUpdate);
 
             connectionDB.close();
         } catch (Exception e){
@@ -119,4 +129,31 @@ public class LoginController implements Initializable {
             e.getCause();
         }
     }
+
+    /*
+     * Gets the IP Address of a unique user
+     * Returns a String value
+     */
+    private String getIPAddress() throws Exception {
+        //Don't need the line of code below, TODO: delete it!
+        InetAddress getIP = InetAddress.getLocalHost();
+        String thisSystemAddress = "";
+        try{
+            URL thisUrl = new URL("http://bot.whatismyipaddress.com");
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(thisUrl.openStream()));
+            thisSystemAddress = bufferedReader.readLine().trim();
+        } catch (Exception e){
+            e.printStackTrace();
+            e.getCause();
+        }
+
+        return thisSystemAddress;
+    }
+
+    /*
+    public static String getClientUserName(){
+        String usernameString = usernameTextField.getText();
+        return usernameString;
+    }*/
+
 }

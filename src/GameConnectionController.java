@@ -7,6 +7,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -15,7 +20,7 @@ import java.util.List;
 import java.util.Random;
 
 import Authentication.Backend.DatabaseConnection;
-
+import Authentication.Backend.LoginController;
 
 public class GameConnectionController {
 
@@ -60,6 +65,9 @@ public class GameConnectionController {
             //if it is in there, we send our player to the game lobby thread
             if (gameCodeList.contains(Integer.parseInt(keyCodeTextField.getText()))){
                 //TODO: Send player to the game lobby server thread
+                //      we should also set the joining player's database
+                //      gamecodeID to the same ID of the game
+
             } else {
                 invalidCodeText.setText("Invalid Game Code");
             }
@@ -105,9 +113,34 @@ public class GameConnectionController {
             //      ALSO: Test to see if this is working - UPDATE: we got it to work as in
             //      transfering to the new screen. Now work on sending information and also
             //      delete information once a user exits so it doesn't stay forever
+            //      ALSO: add ip column in database for one end user and use that info to
+            //            insert it right into our new class that we forward to
 
+            //TODO: UPDATE - this is useless for now, probably will be benificial when we setup connections over networks
+            String getIP = getIPAddress();
+            //fetch the ip address here
+            String getIPQuery = "SELECT username FROM user_account WHERE user_ip = '" + getIP + "'";
 
+            ResultSet getTheUsername = statement.executeQuery(getIPQuery);
+            String username = "";
+            if (getTheUsername.next()){
+                 username = getTheUsername.getString("username");
+            }
 
+            //String username = LoginController.getClientUserName();
+            //now we have the username, get the id
+            String queryStatementForID = "SELECT account_id FROM user_account WHERE username = '" + username + "'";
+            ResultSet currentID = statement.executeQuery(queryStatementForID);
+            int id = 0;
+            if (currentID.next()){
+                id = currentID.getInt("account_id");
+            }
+
+            String createGameInstanceQuery = "INSERT INTO gamecodeid(GameCodeID, account_id, host_privileges) VALUES ('";
+            String gameIDValues = gameCode + "','" + id + "','" + 1 + "')";
+            String initializeGameLobbyQuery = createGameInstanceQuery + gameIDValues;
+
+            statement.executeUpdate(initializeGameLobbyQuery);
 
             Parent root = FXMLLoader.load(getClass().getResource("GameLobbyThread.fxml"));
             Stage gameLobbyStage = new Stage();
@@ -125,6 +158,22 @@ public class GameConnectionController {
             e.getCause();
         }
 
+    }
+
+    private String getIPAddress() throws Exception {
+        //Don't need the line of code below, TODO: delete it!
+        InetAddress getIP = InetAddress.getLocalHost();
+        String thisSystemAddress = "";
+        try{
+            URL thisUrl = new URL("http://bot.whatismyipaddress.com");
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(thisUrl.openStream()));
+            thisSystemAddress = bufferedReader.readLine().trim();
+        } catch (Exception e){
+            e.printStackTrace();
+            e.getCause();
+        }
+
+        return thisSystemAddress;
     }
 
 }

@@ -1,12 +1,19 @@
+import Authentication.Backend.DatabaseConnection;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.ResourceBundle;
 
 /*
@@ -62,5 +69,23 @@ public class GameLobbyThreadController implements Initializable {
         //      update the current Lobby state
         //      Also, check to see if the owner leaves as well, this is important because if the host leaves, then the
         //      game is over.
+
+        try {
+            DatabaseConnection databaseConnection = new DatabaseConnection();
+            Connection connectionDB = databaseConnection.getConnection();
+
+
+            Parent root = FXMLLoader.load(getClass().getResource("GameConnectionController.fxml"));
+            Stage gameLobbyStage = new Stage();
+            gameLobbyStage.setScene(new Scene(root, 600, 400));
+            gameLobbyStage.show();
+
+            Stage stage = (Stage) brexitButton.getScene().getWindow();
+            stage.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            e.getCause();
+        }
     }
 }
