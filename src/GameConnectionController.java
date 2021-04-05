@@ -123,7 +123,7 @@ public class GameConnectionController {
 
             ResultSet getTheUsername = statement.executeQuery(getIPQuery);
             String username = "";
-            if (getTheUsername.next()){
+            while (getTheUsername.next()){
                  username = getTheUsername.getString("username");
             }
 
@@ -132,7 +132,7 @@ public class GameConnectionController {
             String queryStatementForID = "SELECT account_id FROM user_account WHERE username = '" + username + "'";
             ResultSet currentID = statement.executeQuery(queryStatementForID);
             int id = 0;
-            if (currentID.next()){
+            while (currentID.next()){
                 id = currentID.getInt("account_id");
             }
 

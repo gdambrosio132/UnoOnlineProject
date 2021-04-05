@@ -10,9 +10,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ResourceBundle;
 
@@ -69,23 +73,48 @@ public class GameLobbyThreadController implements Initializable {
         //      update the current Lobby state
         //      Also, check to see if the owner leaves as well, this is important because if the host leaves, then the
         //      game is over.
+        //      UPDATE: brexit button complete for database and UI side, just set up Networking
 
         try {
             DatabaseConnection databaseConnection = new DatabaseConnection();
             Connection connectionDB = databaseConnection.getConnection();
 
+            Statement statement = connectionDB.createStatement();
+            String exitQuery = "SELECT account_id FROM user_account WHERE user_ip = '" + getIPAddress() + "'";
+            ResultSet resultSet = statement.executeQuery(exitQuery);
+            if (resultSet.next()){
+                int id = resultSet.getInt("account_id");
+                String exitUpdate = "DELETE FROM gamecodeid WHERE account_id = '" + id + "'";
+                statement.executeUpdate(exitUpdate);
+            }
 
-            Parent root = FXMLLoader.load(getClass().getResource("GameConnectionController.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("KeyConnect.fxml"));
             Stage gameLobbyStage = new Stage();
             gameLobbyStage.setScene(new Scene(root, 600, 400));
             gameLobbyStage.show();
 
             Stage stage = (Stage) brexitButton.getScene().getWindow();
             stage.close();
-
+            connectionDB.close();
         } catch (Exception e) {
             e.printStackTrace();
             e.getCause();
         }
+    }
+
+    private String getIPAddress() throws Exception {
+        //Don't need the line of code below, TODO: delete it!
+        InetAddress getIP = InetAddress.getLocalHost();
+        String thisSystemAddress = "";
+        try{
+            URL thisUrl = new URL("http://bot.whatismyipaddress.com");
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(thisUrl.openStream()));
+            thisSystemAddress = bufferedReader.readLine().trim();
+        } catch (Exception e){
+            e.printStackTrace();
+            e.getCause();
+        }
+
+        return thisSystemAddress;
     }
 }

@@ -1,5 +1,9 @@
 package Objects;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,11 +16,10 @@ public class CardDeck {
     //each color has unique 0
     //deal with special cards later
 
-    private static List<Card> cards;
-    private static List<SpecialCard> specialCards;
-    private List<Object> cardDeck;
-    private static String[] colors = {"Red", "Yellow", "Green", "Blue"};
-    private static String[] specialty = {"SwitchDeck", "AddFour", "AddTwo", "Skip", "WildColor", "Reverse"};
+    private List<Card> cardDeck;
+    private static String[] colors = {"Red", "Yellow", "Green", "Blue", "Any"};
+    private static String[] specialty = {"Skip", "Reverse", "AddTwo"};
+    private static String[] otherSpecialty = {"AddFour", "AddFour", "WildCard", "WildCard"};
     //No need for any other constructor as we are merely just creating a stack of default cards
     //maybe the operations take place here when we need it to be
 
@@ -24,7 +27,7 @@ public class CardDeck {
         this.cardDeck = new ArrayList<>();
     }
 
-    public CardDeck(List<Object> cardDeck){
+    public CardDeck(List<Card> cardDeck){
         this.cardDeck = cardDeck;
     }
 
@@ -32,19 +35,12 @@ public class CardDeck {
     //We also have to plan on distributing our cards from our deck to our players
 
     //Add card to a deck //probably deletes these first two add methods
+
     public void addCard(Card card){
         cardDeck.add(card);
     }
 
-    public void addCard(SpecialCard card){
-        cardDeck.add(card);
-    }
-
-    public void addCard(Object card){
-        cardDeck.add(card);
-    }
-
-    public Object draw(){
+    public Card draw(){
         //maybe add !assert for cardDeck.size() so we won't encounter an error
         //might show up as an error if we run this at the end
         if (cardDeck.size() < 0 || cardDeck.isEmpty()){
@@ -53,35 +49,74 @@ public class CardDeck {
         return cardDeck.remove(0);
     }
 
+    public Card peekCardAt(int i){
+        if (cardDeck.size() < i || cardDeck.isEmpty()){
+            return null;
+        }
+        return cardDeck.remove(i);
+    }
+
+    public Card displayFrontalCard(){
+        return cardDeck.get(0);
+    }
+
     public int getCardCount(){
         return cardDeck.size();
     }
 
 
 
+
     //maybe make this into a static method but for now, leave it as it is
+    //UPDATE: THIS WORKS! EUREKA
     public static CardDeck initializeDeck(){
         //insert all regular card variants from 0 - 9 of different colors
-        List<Object> cardDeckInit = new ArrayList<>();
+        //Along with getting the card image ids
+        List<Card> cardDeckInit = new ArrayList<>();
+        List<String> cardFileNames = cardReader();
+        int cardTracker = 0;
+        int specialCardTracker = 40;
         for (int i = 0; i < 4; i++){
-            for (int j = 0; i < 10; i++){
-                cardDeckInit.add(cards.add(new Card(j, colors[i])));
+            for (int j = 0; j < 10; j++){
+                cardDeckInit.add(new Card(j, colors[i],  cardFileNames.get(cardTracker)));
                 //maybe add if-else clause in here to add in extra pairings
-                if (j != 0){
-                    cardDeckInit.add(cards.add(new Card(j, colors[i])));
+                if (j > 0){
+                    cardDeckInit.add(new Card(j, colors[i], cardFileNames.get(cardTracker)));
                 }
+                cardTracker++;
             }
 
             //insert specialty cards
-            for (int k = 0; k < 6; k++){
-                cardDeckInit.add(specialCards.add(new SpecialCard(colors[i], specialty[k])));
+            for (int k = 0; k < 3; k++){
+                cardDeckInit.add(new Card(colors[i], specialty[k], cardFileNames.get(specialCardTracker)));
+                specialCardTracker++;
                 //add if-else clause as before i think
             }
         }
 
-        Collections.shuffle(cardDeckInit);
+        for (int l = 0; l < 4; l++){
+            cardDeckInit.add(new Card(otherSpecialty[l], cardFileNames.get(specialCardTracker)));
+            specialCardTracker++;
+        }
+
+
+        //Collections.shuffle(cardDeckInit);
 
         //we should have our card deck all set and ready by this point
         return new CardDeck(cardDeckInit);
+    }
+
+    //Gets all listed items in the file, this will be the helper method for initialize method above
+    public static List<String> cardReader(){
+        List<String> fileNames = new ArrayList<String>();
+        File[] files = new File("images/cardfolder").listFiles();
+
+        for (File file : files){
+            if (file.isFile()){
+                fileNames.add(file.getName());
+            }
+        }
+
+        return fileNames;
     }
 }

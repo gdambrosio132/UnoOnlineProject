@@ -1,4 +1,4 @@
-import java.util.Arrays;
+package Objects;
 
 /**
  *  A rectangle shape, defined by its position and size,
@@ -105,7 +105,7 @@ public class Rectangle
         return !noOverlap;
     }
 
-    /*public Vector getMinimumTranslationVector(Rectangle other)
+    /*public Vector getMinimumTranslationVector(Objects.Rectangle other)
     {
         Vector[] differences = {
                 new Vector(other.right - this.left, 0),
