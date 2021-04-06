@@ -1,14 +1,11 @@
 package Objects;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CardDeck {
+public class CardDeck implements Serializable {
     //We must initialize new card deck
     //this is how it goes
     //4 different colors - red, yellow, green, and blue
@@ -56,6 +53,10 @@ public class CardDeck {
         return cardDeck.remove(i);
     }
 
+    public Card removeFirstCard(){
+        return cardDeck.remove(0);
+    }
+
     public Card displayFrontalCard(){
         return cardDeck.get(0);
     }
@@ -64,7 +65,9 @@ public class CardDeck {
         return cardDeck.size();
     }
 
-
+    public Card getSpecificCardFromDeck(int i){
+        return cardDeck.get(i);
+    }
 
 
     //maybe make this into a static method but for now, leave it as it is
@@ -100,7 +103,7 @@ public class CardDeck {
         }
 
 
-        //Collections.shuffle(cardDeckInit);
+        Collections.shuffle(cardDeckInit);
 
         //we should have our card deck all set and ready by this point
         return new CardDeck(cardDeckInit);

@@ -1,4 +1,5 @@
-/*import Objects.CardDeck;
+import Objects.Card;
+import Objects.CardDeck;
 
 import java.io.*;
 import java.net.*;
@@ -10,34 +11,38 @@ import java.util.Scanner;
  *       get rid of the public static void main so it runs as we launch the application in another window
  */
 
-/*public class Client {
+public class Client {
 
     private CardDeck playerDeck;
     private Socket client;
     private int userID;
     private String name;
+    private static Game game = new Game();
 
 
-    /*public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
         Scanner scan = new Scanner(System.in);
         String clientName = "";
         boolean firstIteration = true;
-
         //we require the hostName and the portNumber for this simulation
         String hostName = "localhost";
         int portNumber = 4444;
 
-        Message inMessage = null;
+        //Message inMessage = null;
         ObjectInputStream in = null;
         Socket IMSocket = null;
         ObjectOutputStream outObject = null;
+        CardDeck clientCards = null;
+        Card discardCard = null;
 
         //We connect to the server from this base client
         try {
             IMSocket = new Socket(hostName, portNumber);
             outObject = new ObjectOutputStream(IMSocket.getOutputStream());
             in = new ObjectInputStream(IMSocket.getInputStream());
-            inMessage = (Message) in.readObject();
+            //inMessage = (Message) in.readObject();
+            clientCards = (CardDeck) in.readObject();
+            discardCard = (Card) in.readObject();
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host: ");
             System.exit(1);
@@ -52,9 +57,51 @@ import java.util.Scanner;
         BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
         String fromServer;
         String fromServerName;
+        String myChoiceCard;
         String fromUser;
+        boolean playing;
+        Card checkDiscardCard;
 
 
+        while ((checkDiscardCard = discardCard) != null) {
+            for (int i = 0; i < clientCards.getCardCount(); i++){
+                System.out.println(clientCards.getSpecificCardFromDeck(i).toString());
+            }
+            System.out.println("This is the discard card, see if you have a match: " + checkDiscardCard.toString());
+
+            //TODO: simply send out a card via text input, should be a while loop
+            myChoiceCard = stdIn.readLine();
+
+            if (myChoiceCard.equals("add")){
+                clientCards.addCard(game.getFromDrawPile());
+                outObject.writeObject(checkDiscardCard);
+            } else {
+                boolean checker = false;
+                Card newPotentialDiscardCard = new Card();
+                while (!checker) {
+                    for (int i = 0; i < clientCards.getCardCount(); i++) {
+                        if (myChoiceCard.equals(clientCards.getSpecificCardFromDeck(i).toString())) {
+                            checker = true;
+                            newPotentialDiscardCard = clientCards.peekCardAt(i);
+                            break;
+                        }
+                    }
+                }
+
+                //TODO: now send the info to the server for checking
+                outObject.writeObject(newPotentialDiscardCard);
+            }
+
+            try {
+                discardCard = (Card) in.readObject();
+            } catch (ClassNotFoundException cnfe) {
+                System.err.println("IMClient: Problem reading object: class not found");
+                System.exit(1);
+            }
+        }
+
+
+        /*
         //Make sure to run until we don't get a valid object back to us
         while ((fromServer = inMessage.getResponse()) != null || (fromServerName = inMessage.getName()) != null)  {
             //Print content of object that was sent to us
@@ -69,8 +116,9 @@ import java.util.Scanner;
 
 
             //When server prompts Bye message, we break out
-            if (fromServer.equals("Bye"))
-                break;
+            //if (fromServer.equals("Bye"))
+                //break;
+
 
 
             //User-Side view of Messaging Screen
@@ -92,7 +140,7 @@ import java.util.Scanner;
                 System.err.println("IMClient: Problem reading object: class not found");
                 System.exit(1);
             }
-        }
+        }*/
 
         //out.close();
         outObject.close();
@@ -100,7 +148,8 @@ import java.util.Scanner;
         stdIn.close();
         IMSocket.close();
 
-    }*/
+    }
+}
 /*
     public Client(Socket client, String name, int userID){
         this.client = client;

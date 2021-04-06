@@ -1,4 +1,4 @@
-/*import java.net.*;
+import java.net.*;
 import java.io.*;
 
 public class GameMultiServer {
@@ -7,7 +7,6 @@ public class GameMultiServer {
         //we set it as 4444 for now
         int portNumber = 4444;
         boolean listening = true;
-        Game game;
 
         try (ServerSocket serverSocket = new ServerSocket(portNumber)){
             while (listening) {
@@ -18,4 +17,4 @@ public class GameMultiServer {
             System.exit(-1);
         }
     }
-}*/
+}

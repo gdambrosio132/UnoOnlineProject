@@ -2,7 +2,9 @@ package Objects;
 
 import javafx.scene.image.Image;
 
-public class Card {
+import java.io.Serializable;
+
+public class Card implements Serializable {
     private int cardNumber;
     private String cardColor;
     private String image;

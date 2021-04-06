@@ -4,6 +4,7 @@ import Objects.SpecialCard;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /*
  * The point of this whole Game class is to establish the instructions of the game
@@ -22,6 +23,9 @@ public class Game {
     private boolean action = false;
     private List<Player> players = new ArrayList<Player>();
     private boolean playing = false;
+    private CardDeck server;
+    private CardDeck client;
+    private String what = null;
 
     //This initializes the game by assigning players with a list of 7 cards each from the drawing pile
     //inside the parameters goes List<Client> players;
@@ -42,6 +46,40 @@ public class Game {
         discard.addCard(firstCard);
         playing = true;
     }
+
+    public Game(String what, CardDeck client){
+        this.what = what;
+        this.client = new CardDeck();
+        this.client = client;
+    }
+
+    //New and imporoved Game Constructor
+    public Game(){
+        client = new CardDeck();
+        server = new CardDeck();
+        for (int i = 0; i < 7; i++){
+            client.addCard(drawing.draw());
+            server.addCard(drawing.draw());
+        }
+
+        Card firstCard = drawing.draw();
+        while (firstCard.getCardNumber() < 0){
+            drawing.addCard(firstCard);
+            firstCard = drawing.draw();
+        }
+        discard.addCard(firstCard);
+        playing = true;
+
+    }
+
+    public CardDeck getClientCardDeck(){
+        return client;
+    }
+
+    public CardDeck getServerCardDeck(){
+        return server;
+    }
+
 
     public void turn(){
         turnCount++;
@@ -98,24 +136,62 @@ public class Game {
         }
     }
 
-    private Card getTopDiscard(){
+    public void putInCardInDiscardPile(Card card){
+        Card newCard = discard.removeFirstCard();
+        drawing.addCard(newCard);
+        discard.addCard(card);
+    }
+
+    public Card getTopDiscard(){
         return discard.peekCardAt(discard.getCardCount());
     }
 
-    private boolean regularLegalStatus(Card card){
-        if (card.getCardNumber() == getTopDiscard().getCardNumber() || card.getCardColor().equals(getTopDiscard().getCardColor())){
+    public Card peekAtTopCardDiscard(){
+        return discard.displayFrontalCard();
+    }
+
+    public boolean regularLegalStatus(Card card){
+        if (card.getCardNumber() == peekAtTopCardDiscard().getCardNumber() || card.getCardColor().equals(peekAtTopCardDiscard().getCardColor())){
             return true;
         }
         return false;
     }
 
-    private boolean advanceLegalStatus(Card card){
+    public boolean advanceLegalStatus(Card card){
         if (card.getCardColor().equals(getTopDiscard().getCardColor())){
 
         }
         return false;
     }
 
+    public boolean isPlaying(){
+        return playing;
+    }
 
+    public Card getFromDrawPile(){
+        return drawing.draw();
+    }
 
+    public String processInput(String theInput) {
+        String theOutput = null;
+        //System.out.print("Server:");
+        Scanner scan = new Scanner(System.in);
+        /*
+        if (state == WAITING) {
+            theOutput = "Connection Established!";
+            //start deck and give cards to players here
+
+            state = IN_GAMEPLAY;
+        } else if (state == IN_GAMEPLAY) {
+
+            System.out.print("Server: ");
+            theOutput =scan.nextLine();
+        } else {
+            theOutput = "Bye.";
+            state = WAITING;
+        }*/
+
+        theOutput = scan.nextLine();
+        return theOutput;
+    }
 }
