@@ -1,3 +1,5 @@
+package Backend.Controllers;
+
 import Authentication.Backend.DatabaseConnection;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -69,7 +71,7 @@ public class GameLobbyThreadController implements Initializable {
     }
 
     public void brexitButtonOnAction(){
-        //TODO: when the button is pressed, we navigate back to the GameConnectionController.java screen and also we
+        //TODO: when the button is pressed, we navigate back to the Backend.Controllers.GameConnectionController.java screen and also we
         //      update the current Lobby state
         //      Also, check to see if the owner leaves as well, this is important because if the host leaves, then the
         //      game is over.
@@ -88,7 +90,7 @@ public class GameLobbyThreadController implements Initializable {
                 statement.executeUpdate(exitUpdate);
             }
 
-            Parent root = FXMLLoader.load(getClass().getResource("KeyConnect.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("Frontend/KeyConnect.fxml"));
             Stage gameLobbyStage = new Stage();
             gameLobbyStage.setScene(new Scene(root, 600, 400));
             gameLobbyStage.show();

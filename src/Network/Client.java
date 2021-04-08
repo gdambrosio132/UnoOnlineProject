@@ -1,3 +1,6 @@
+package Network;
+
+import Backend.Game;
 import Objects.Card;
 import Objects.CardDeck;
 
@@ -28,7 +31,7 @@ public class Client {
         String hostName = "localhost";
         int portNumber = 4444;
 
-        //Message inMessage = null;
+        //Objects.Message inMessage = null;
         ObjectInputStream in = null;
         Socket IMSocket = null;
         ObjectOutputStream outObject = null;
@@ -40,7 +43,7 @@ public class Client {
             IMSocket = new Socket(hostName, portNumber);
             outObject = new ObjectOutputStream(IMSocket.getOutputStream());
             in = new ObjectInputStream(IMSocket.getInputStream());
-            //inMessage = (Message) in.readObject();
+            //inMessage = (Objects.Message) in.readObject();
             clientCards = (CardDeck) in.readObject();
             discardCard = (Card) in.readObject();
         } catch (UnknownHostException e) {
@@ -73,6 +76,7 @@ public class Client {
             myChoiceCard = stdIn.readLine();
 
             if (myChoiceCard.equals("add")){
+                //TODO: HOW ABOUT WE SEND IN AN EMPTY CARD OBJECT AND HAVE IT INITIALIZE IT FOR US AND GET RID OF THE OG
                 clientCards.addCard(game.getFromDrawPile());
                 outObject.writeObject(checkDiscardCard);
             } else {
@@ -88,9 +92,13 @@ public class Client {
                     }
                 }
 
+                boolean x = checkUp();
+
                 //TODO: now send the info to the server for checking
                 outObject.writeObject(newPotentialDiscardCard);
             }
+
+
 
             try {
                 discardCard = (Card) in.readObject();
@@ -126,7 +134,7 @@ public class Client {
             fromUser = stdIn.readLine();
 
             //Object to sent out to the Server -- takes in clients name and message
-            Message outMessage = new Message(clientName, fromUser);
+            Objects.Message outMessage = new Objects.Message(clientName, fromUser);
 
             //Before we send it out, make sure it isn't empty
             if (fromUser != null) {
@@ -135,7 +143,7 @@ public class Client {
 
             //Second Case to see if
             try {
-                inMessage = (Message) in.readObject();
+                inMessage = (Objects.Message) in.readObject();
             } catch (ClassNotFoundException cnfe) {
                 System.err.println("IMClient: Problem reading object: class not found");
                 System.exit(1);
@@ -149,9 +157,13 @@ public class Client {
         IMSocket.close();
 
     }
+
+    public static boolean checkUp(){
+        return true;
+    }
 }
 /*
-    public Client(Socket client, String name, int userID){
+    public Network.Client(Socket client, String name, int userID){
         this.client = client;
         this.name = name;
         this.userID = userID;

@@ -1,3 +1,5 @@
+package Backend.Controllers;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,7 +22,6 @@ import java.util.List;
 import java.util.Random;
 
 import Authentication.Backend.DatabaseConnection;
-import Authentication.Backend.LoginController;
 
 public class GameConnectionController {
 
@@ -38,14 +39,14 @@ public class GameConnectionController {
         //see if there is a generated code with those numbers and allow them in the game, else prompt the message
 
         if (keyCodeTextField.getText() == null){
-            invalidCodeText.setText("Please enter in a Game Code to Join");
+            invalidCodeText.setText("Please enter in a Backend.Game Code to Join");
         } else {
             validateGameCode();
             //TODO: establish game connection logic I think lol its late a night
             Stage stage1 = (Stage) joinGameButton.getScene().getWindow();
         }
 
-        invalidCodeText.setText("Invalid Game Code");
+        invalidCodeText.setText("Invalid Backend.Game Code");
     }
 
     public void validateGameCode(){
@@ -69,7 +70,7 @@ public class GameConnectionController {
                 //      gamecodeID to the same ID of the game
 
             } else {
-                invalidCodeText.setText("Invalid Game Code");
+                invalidCodeText.setText("Invalid Backend.Game Code");
             }
 
             connectionDB.close();
@@ -142,7 +143,8 @@ public class GameConnectionController {
 
             statement.executeUpdate(initializeGameLobbyQuery);
 
-            Parent root = FXMLLoader.load(getClass().getResource("GameLobbyThread.fxml"));
+            //TODO: GET THE RIGHT LOCATION OR ELSE IT WONT START
+            Parent root = FXMLLoader.load(getClass().getResource("../src/Frontend/GameLobbyThread.fxml"));
             Stage gameLobbyStage = new Stage();
             gameLobbyStage.setScene(new Scene(root, 600, 400));
             gameLobbyStage.show();

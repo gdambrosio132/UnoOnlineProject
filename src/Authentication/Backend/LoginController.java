@@ -120,7 +120,7 @@ public class LoginController implements Initializable {
 
     public void gameCodeScreen(){
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/KeyConnect.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/Frontend/KeyConnect.fxml"));
             Stage gameCodeScreen = new Stage();
             gameCodeScreen.setScene(new Scene(root, 600, 400));
             gameCodeScreen.show();

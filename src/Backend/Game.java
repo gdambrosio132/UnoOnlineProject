@@ -1,13 +1,15 @@
+package Backend;
+
 import Objects.Card;
 import Objects.CardDeck;
-import Objects.SpecialCard;
+import Objects.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 /*
- * The point of this whole Game class is to establish the instructions of the game
+ * The point of this whole Backend.Game class is to establish the instructions of the game
  * This means when the game starts on a thread, we utilize the methods within this class
  * to start by calling the constructor
  *
@@ -28,7 +30,7 @@ public class Game {
     private String what = null;
 
     //This initializes the game by assigning players with a list of 7 cards each from the drawing pile
-    //inside the parameters goes List<Client> players;
+    //inside the parameters goes List<Network.Client> players;
     public Game(int playerCount){
         for (int i = 0; i < playerCount; i++){ //side note, the 4 is replace by the joined player count
             for (int j = 0; j < 7; j++){
@@ -53,7 +55,7 @@ public class Game {
         this.client = client;
     }
 
-    //New and imporoved Game Constructor
+    //New and imporoved Backend.Game Constructor
     public Game(){
         client = new CardDeck();
         server = new CardDeck();

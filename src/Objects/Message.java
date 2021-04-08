@@ -1,3 +1,5 @@
+package Objects;
+
 public class Message implements java.io.Serializable{
 
     private String name, response;

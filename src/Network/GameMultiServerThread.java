@@ -1,3 +1,6 @@
+package Network;
+
+import Backend.Game;
 import Objects.Card;
 import Objects.CardDeck;
 
@@ -11,7 +14,7 @@ public class GameMultiServerThread extends Thread {
     private Game game = null;
 
     public GameMultiServerThread(Socket socket){
-        super("GameMultiServerThread");
+        super("Network.GameMultiServerThread");
         this.socket = socket;
     }
 
@@ -24,7 +27,7 @@ public class GameMultiServerThread extends Thread {
             Card inputCard, outputCard;
 
                 game = new Game();
-                //SimpleIMProtocol kkp = new SimpleIMProtocol();
+                //Backend.SimpleIMProtocol kkp = new Backend.SimpleIMProtocol();
                 //outputLine = kkp.processInput(null);
                 //get the cards for you and the player
 
@@ -35,12 +38,12 @@ public class GameMultiServerThread extends Thread {
                 //TODO: we send in the client its cards that it has to work with
                 //      therefore the client must put these cards in its own data deck
                 out.writeObject(clientCards);
-                //Message message = new Message("Server", outputLine);
+                //Objects.Message message = new Objects.Message("Server", outputLine);
                 //out.writeObject(message);
                 out.writeObject(discardPileTop);
                 //TODO: read in back what the client has sent in to be the potential new discard top deck card
                 Card clientCard = (Card) in.readObject();
-                //Message inMessage = (Message) inObject.readObject();
+                //Objects.Message inMessage = (Objects.Message) inObject.readObject();
 
                 //TODO: game is always playing, so just have it running forever til we stop until no cards are left
                 while(game.isPlaying()){
@@ -51,6 +54,8 @@ public class GameMultiServerThread extends Thread {
                     for (int i = 0; i < serverCards.getCardCount(); i++){
                         System.out.println(serverCards.getSpecificCardFromDeck(i).toString());
                     }
+
+                    //TODO: UPDATE CLIENTS CARD ON THIS END AS WELL SO WE KNOW WHAT WE ARE DOING AND NOT LOST
 
                     //TODO: our input should match what is potential
                     while (!game.regularLegalStatus(clientCard)){
@@ -106,14 +111,14 @@ public class GameMultiServerThread extends Thread {
                     System.out.print("Server");
 
                     outputLine = kkp.processInput(inputLine);
-                    message = new Message("Server", outputLine);
+                    message = new Objects.Message("Server", outputLine);
                     out.writeObject(message);
 
                     if (outputLine.equals("Bye"))
                         break;
 
                     try {
-                        inMessage = (Message) in.readObject();
+                        inMessage = (Objects.Message) in.readObject();
                     } catch (ClassNotFoundException cnfe) {
                         System.err.println("IMClient: Problem reading object: class not found");
                         System.exit(1);
