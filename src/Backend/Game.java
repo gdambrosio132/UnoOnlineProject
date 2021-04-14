@@ -83,7 +83,18 @@ public class Game {
     }
 
     public void removeCardFromClientDeck(Card c){
-        client.removeSpecificCardFromDeck(c);
+        //TODO: find the index of that card position
+        int i = getClientCardIndex(client, c);
+        client.removeSpecificCardFromDeck(i);
+    }
+
+    private int getClientCardIndex(CardDeck cardDeck, Card card){
+        for (int i = 0; i < cardDeck.getCardCount(); i++){
+            if (cardDeck.getSpecificCardFromDeck(i).toString().equals(card.toString())){
+                return i;
+            }
+        }
+        return -1;
     }
 
     public void updateClientDeck(CardDeck cardDeck){
@@ -98,8 +109,9 @@ public class Game {
         server.addCard(c);
     }
 
+    //TODO: DONT USE THIS METHOD
     public void removeCardFromServerDeck(Card c){
-        server.removeSpecificCardFromDeck(c);
+        server.removeSpecificCardFromDeck(1);
     }
 
     public void updateServerDeck(CardDeck cardDeck){
@@ -172,7 +184,7 @@ public class Game {
         drawing.addCard(c);
     }
 
-    public Card getTopDiscard(){
+    private Card getTopDiscard(){
         return discard.peekCardAt(discard.getCardCount());
     }
 

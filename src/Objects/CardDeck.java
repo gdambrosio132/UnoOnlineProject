@@ -69,8 +69,8 @@ public class CardDeck implements Serializable {
         return cardDeck.get(i);
     }
 
-    public void removeSpecificCardFromDeck(Card c){
-        cardDeck.remove(c);
+    public void removeSpecificCardFromDeck(int i){
+        cardDeck.remove(i);
     }
 
 

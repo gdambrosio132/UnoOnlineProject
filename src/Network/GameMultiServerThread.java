@@ -70,7 +70,10 @@ public class GameMultiServerThread extends Thread {
 
                 //TODO: UPDATE CLIENTS CARD ON THIS END AS WELL SO WE KNOW WHAT WE ARE DOING AND NOT LOST
                 //      UPDATE: WTF THIS IS SUPPOSE TO WORK! WHY IS IT NOT WORKING!
-                clientCards.removeSpecificCardFromDeck(clientCard);
+                //      UPDATE 2: F*&% YEAH IT WORKS! XD
+                //clientCards.removeSpecificCardFromDeck(clientCard);
+                game.removeCardFromClientDeck(clientCard);
+                clientCards = game.getClientCardDeck();
 
 
                 //TODO: good news, cards are that were once on the discard pile are sucessfully going back to the
@@ -149,6 +152,8 @@ public class GameMultiServerThread extends Thread {
 
 
                 try {
+                    //game.removeCardFromClientDeck(clientCard);
+                    //clientCards = game.getClientCardDeck();
                     clientCard = (Card) in.readObject();
                 } catch (ClassNotFoundException cnfe){
                     System.err.println("IMClient: Problem reading object: class not found");
