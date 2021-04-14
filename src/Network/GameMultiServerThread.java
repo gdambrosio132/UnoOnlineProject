@@ -68,7 +68,6 @@ public class GameMultiServerThread extends Thread {
                     System.out.println(serverCards.getSpecificCardFromDeck(i).toString());
                 }
 
-
                 //TODO: UPDATE CLIENTS CARD ON THIS END AS WELL SO WE KNOW WHAT WE ARE DOING AND NOT LOST
                 //      UPDATE: WTF THIS IS SUPPOSE TO WORK! WHY IS IT NOT WORKING!
                 clientCards.removeSpecificCardFromDeck(clientCard);
