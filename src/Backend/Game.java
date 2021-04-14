@@ -55,7 +55,7 @@ public class Game {
         this.client = client;
     }
 
-    //New and imporoved Backend.Game Constructor
+    //New and improved Backend.Game Constructor
     public Game(){
         client = new CardDeck();
         server = new CardDeck();
@@ -78,8 +78,32 @@ public class Game {
         return client;
     }
 
+    public void addCardToClientDeck(Card c){
+        client.addCard(c);
+    }
+
+    public void removeCardFromClientDeck(Card c){
+        client.removeSpecificCardFromDeck(c);
+    }
+
+    public void updateClientDeck(CardDeck cardDeck){
+        client = cardDeck;
+    }
+
     public CardDeck getServerCardDeck(){
         return server;
+    }
+
+    public void addCardToServerDeck(Card c){
+        server.addCard(c);
+    }
+
+    public void removeCardFromServerDeck(Card c){
+        server.removeSpecificCardFromDeck(c);
+    }
+
+    public void updateServerDeck(CardDeck cardDeck){
+        server = cardDeck;
     }
 
 
@@ -144,6 +168,10 @@ public class Game {
         discard.addCard(card);
     }
 
+    public void putInCardInDrawingPile(Card c){
+        drawing.addCard(c);
+    }
+
     public Card getTopDiscard(){
         return discard.peekCardAt(discard.getCardCount());
     }
@@ -165,6 +193,14 @@ public class Game {
         }
         return false;
     }
+
+    public void printDrawingDeck(){
+        System.out.println("Drawing Deck: ");
+        for (int i = 0; i < drawing.getCardCount(); i++){
+            System.out.println(drawing.getSpecificCardFromDeck(i).toString());
+        }
+    }
+
 
     public boolean isPlaying(){
         return playing;
@@ -196,4 +232,5 @@ public class Game {
         theOutput = scan.nextLine();
         return theOutput;
     }
+
 }

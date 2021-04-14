@@ -31,7 +31,11 @@ public class Client {
         String hostName = "localhost";
         int portNumber = 4444;
 
-        //Objects.Message inMessage = null;
+        //Server card amount logic
+        //This is to keep track of how many cards the server has
+        int serverAmount = 7;
+
+
         ObjectInputStream in = null;
         Socket IMSocket = null;
         ObjectOutputStream outObject = null;
@@ -43,7 +47,6 @@ public class Client {
             IMSocket = new Socket(hostName, portNumber);
             outObject = new ObjectOutputStream(IMSocket.getOutputStream());
             in = new ObjectInputStream(IMSocket.getInputStream());
-            //inMessage = (Objects.Message) in.readObject();
             clientCards = (CardDeck) in.readObject();
             discardCard = (Card) in.readObject();
         } catch (UnknownHostException e) {
@@ -57,13 +60,14 @@ public class Client {
             System.exit(1);
         }
         //read in information
-        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+        //BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+        Scanner stdIn = new Scanner(System.in);
         String fromServer;
         String fromServerName;
         String myChoiceCard;
         String fromUser;
         boolean playing;
-        Card checkDiscardCard;
+        Card checkDiscardCard, checkIfSameCard;
 
 
         while ((checkDiscardCard = discardCard) != null) {
@@ -73,13 +77,49 @@ public class Client {
             System.out.println("This is the discard card, see if you have a match: " + checkDiscardCard.toString());
 
             //TODO: simply send out a card via text input, should be a while loop
-            myChoiceCard = stdIn.readLine();
+            //myChoiceCard = stdIn.readLine();
+            boolean validText = false;
+            boolean addingValidation = false;
+            Card newCardIncoming = new Card();
+            do {
+                //myChoiceCard = stdIn.readLine();
+                myChoiceCard = stdIn.nextLine();
+                if (myChoiceCard.equals("draw")){
+                    addingValidation = true;
+                    break;
+                }
+                //we have the text, now check to see if it matches one of our card toString
+                for (int i = 0; i < clientCards.getCardCount(); i++){
+                    if (clientCards.getSpecificCardFromDeck(i).toString().equals(myChoiceCard)){
+                        validText = true;
+                        newCardIncoming = clientCards.getSpecificCardFromDeck(i);
+                        break;
+                    }
+                }
 
-            if (myChoiceCard.equals("add")){
+                //Now that we have a real card, there's another trial to check
+                //the card must be logically correct in correlation to the discard card
+                if (validText){
+                    if (!checkUp(newCardIncoming,checkDiscardCard)) {
+                        validText = false;
+                        System.out.println("Invalid text or Card not there/found");
+                    }
+                } else {
+                    System.out.println("Invalid text or Card not there/found");
+                }
+            } while (!validText);
+
+
+            //TODO: try to deprecate this as the block of code above does it work, but check first
+            if (myChoiceCard.equals("draw")){
                 //TODO: HOW ABOUT WE SEND IN AN EMPTY CARD OBJECT AND HAVE IT INITIALIZE IT FOR US AND GET RID OF THE OG
-                clientCards.addCard(game.getFromDrawPile());
-                outObject.writeObject(checkDiscardCard);
+                Card clientDrawCard = new Card(-2, "color", "image");
+                outObject.writeObject(clientDrawCard);
+                addingValidation = true;
+                //clientCards.addCard(game.getFromDrawPile());
+                //outObject.writeObject(checkDiscardCard);
             } else {
+                //TODO: try to deprecate this as the block of code above does it work, but check first
                 boolean checker = false;
                 Card newPotentialDiscardCard = new Card();
                 while (!checker) {
@@ -92,7 +132,6 @@ public class Client {
                     }
                 }
 
-                boolean x = checkUp();
 
                 //TODO: now send the info to the server for checking
                 outObject.writeObject(newPotentialDiscardCard);
@@ -101,7 +140,12 @@ public class Client {
 
 
             try {
-                discardCard = (Card) in.readObject();
+                if (addingValidation){
+                    Card newDrawedCard = (Card) in.readObject();
+                    clientCards.addCard(newDrawedCard);
+                } else {
+                    discardCard = (Card) in.readObject();
+                }
             } catch (ClassNotFoundException cnfe) {
                 System.err.println("IMClient: Problem reading object: class not found");
                 System.exit(1);
@@ -109,46 +153,7 @@ public class Client {
         }
 
 
-        /*
-        //Make sure to run until we don't get a valid object back to us
-        while ((fromServer = inMessage.getResponse()) != null || (fromServerName = inMessage.getName()) != null)  {
-            //Print content of object that was sent to us
-            System.out.println(inMessage.toString());
 
-            //First Iteration for user to prompt in their name
-            if (firstIteration) {
-                System.out.print("Enter in your name: ");
-                clientName = scan.nextLine();
-                firstIteration = false;
-            }
-
-
-            //When server prompts Bye message, we break out
-            //if (fromServer.equals("Bye"))
-                //break;
-
-
-
-            //User-Side view of Messaging Screen
-            System.out.print(clientName + ": ");
-            fromUser = stdIn.readLine();
-
-            //Object to sent out to the Server -- takes in clients name and message
-            Objects.Message outMessage = new Objects.Message(clientName, fromUser);
-
-            //Before we send it out, make sure it isn't empty
-            if (fromUser != null) {
-                outObject.writeObject(outMessage);
-            }
-
-            //Second Case to see if
-            try {
-                inMessage = (Objects.Message) in.readObject();
-            } catch (ClassNotFoundException cnfe) {
-                System.err.println("IMClient: Problem reading object: class not found");
-                System.exit(1);
-            }
-        }*/
 
         //out.close();
         outObject.close();
@@ -158,36 +163,13 @@ public class Client {
 
     }
 
-    public static boolean checkUp(){
-        return true;
+    public static boolean checkUp(Card client, Card discard){
+        if ((client.getCardNumber() == discard.getCardNumber()
+                || client.getCardColor().equals(discard.getCardColor()))
+                && (client.getAbility() == null && discard.getAbility() == null)){
+            return true;
+        }
+        return false;
     }
 }
-/*
-    public Network.Client(Socket client, String name, int userID){
-        this.client = client;
-        this.name = name;
-        this.userID = userID;
-        this.playerDeck = new CardDeck();
-    }
-
-    public String getName(){
-        return this.name;
-    }
-
-    public int getUserID(){
-        return this.userID;
-    }
-
-    public void retrieveCard(Object card){
-        this.playerDeck.addCard(card);
-    }
-
-    public CardDeck getCard(){
-        return this.playerDeck;
-    }
-
-
-
-
-}*/
 
