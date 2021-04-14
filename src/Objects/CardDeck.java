@@ -81,10 +81,9 @@ public class CardDeck implements Serializable {
         //Along with getting the card image ids
         List<Card> cardDeckInit = new ArrayList<>();
         List<String> cardFileNames = cardReader();
-        //int cardTracker = 0;
+        int cardTracker = 0;
         int specialCardTracker = 76;
         for (int i = 0; i < 4; i++){
-            int cardTracker = 0;
             for (int j = 0; j < 10; j++){
                 cardDeckInit.add(new Card(j, colors[i],  cardFileNames.get(cardTracker)));
                 //maybe add if-else clause in here to add in extra pairings
@@ -109,7 +108,7 @@ public class CardDeck implements Serializable {
         }
 
 
-        //Collections.shuffle(cardDeckInit);
+        Collections.shuffle(cardDeckInit);
 
         //we should have our card deck all set and ready by this point
         return new CardDeck(cardDeckInit);
