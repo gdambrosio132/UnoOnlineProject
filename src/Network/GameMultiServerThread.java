@@ -45,9 +45,6 @@ public class GameMultiServerThread extends Thread {
 
             //TODO: game is always playing, so just have it running forever til we stop until no cards are left
             while(game.isPlaying() || clientCard != null){
-                //get send info from client
-                //check to see if match, if not, tell the client that it is no good
-                //else, it is our turn
 
                 //this means the client is drawing the card and we have to bring back its card
                 while (clientCard.getCardNumber() == -2){
@@ -68,26 +65,9 @@ public class GameMultiServerThread extends Thread {
                     System.out.println(serverCards.getSpecificCardFromDeck(i).toString());
                 }
 
-                //TODO: UPDATE CLIENTS CARD ON THIS END AS WELL SO WE KNOW WHAT WE ARE DOING AND NOT LOST
-                //      UPDATE: WTF THIS IS SUPPOSE TO WORK! WHY IS IT NOT WORKING!
-                //      UPDATE 2: F*&% YEAH IT WORKS! XD
-                //clientCards.removeSpecificCardFromDeck(clientCard);
                 game.removeCardFromClientDeck(clientCard);
                 clientCards = game.getClientCardDeck();
 
-
-                //TODO: good news, cards are that were once on the discard pile are sucessfully going back to the
-                //      drawing pile but like on the bottom and not on top to where we can draw from, lol!
-                System.out.println();
-                //TODO: THIS IS A TEST CASE
-                System.out.println("Client Cards:");
-                for (int i = 0; i < clientCards.getCardCount(); i++){
-                    System.out.println(clientCards.getSpecificCardFromDeck(i).toString());
-                }
-
-                //get the top card
-                //match to see if it is valid, if not, ask again, probably use a while loop
-                //send in info to client once done with the updated info
                 System.out.println("Match the discard pile: " + clientCard.toString());
 
                 game.putInCardInDiscardPile(clientCard);
@@ -96,16 +76,17 @@ public class GameMultiServerThread extends Thread {
                 String potential;
                 Card potentiallyNewServerCard = new Card();
                 boolean validText = false;
+                int adding = 0;
                 do {
                     potential = stdIn.nextLine();
                     while (potential.equals("draw")){
                         serverCards.addCard(game.getFromDrawPile());
+                        adding++;
                         System.out.println("Server Cards:");
                         for (int i = 0; i < serverCards.getCardCount(); i++){
                             System.out.println(serverCards.getSpecificCardFromDeck(i).toString());
                         }
                         System.out.println("Do you want to draw again? Say draw");
-
                         potential = stdIn.nextLine();
                     }
                     //we have the text, now check to see if it matches one of our card toString
@@ -117,8 +98,6 @@ public class GameMultiServerThread extends Thread {
                         }
                     }
 
-                    //Check to see if card is playable
-                    //game.updateServerDeck(serverCards);
                     if (validText){
                         if (!game.regularLegalStatus(potentiallyNewServerCard)){
                             validText = false;
@@ -130,7 +109,20 @@ public class GameMultiServerThread extends Thread {
                 } while (!validText);
 
 
+                if (adding > 0){
+                    Card mockCard = new Card(10 + adding, "color", "image");
+                    out.writeObject(mockCard);
+                    try {
+                        clientCard = (Card) in.readObject();
+                    } catch (ClassNotFoundException cnfe){
+                        System.err.println("IMClient: Problem reading object: class not found");
+                        System.exit(1);
+                    }
+
+                }
+
                 //TODO: try to deprecate this as the block of code above does it work, but check first
+                //TODO: Yeah we might need this
                 boolean checker = false;
                 Card newPotentialDiscardCard = new Card();
                 while (!checker) {
@@ -152,8 +144,6 @@ public class GameMultiServerThread extends Thread {
 
 
                 try {
-                    //game.removeCardFromClientDeck(clientCard);
-                    //clientCards = game.getClientCardDeck();
                     clientCard = (Card) in.readObject();
                 } catch (ClassNotFoundException cnfe){
                     System.err.println("IMClient: Problem reading object: class not found");

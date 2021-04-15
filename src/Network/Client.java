@@ -67,22 +67,32 @@ public class Client {
         String myChoiceCard;
         String fromUser;
         boolean playing;
-        Card checkDiscardCard, checkIfSameCard;
-
+        Card checkDiscardCard;
+        Card checkIfSameCard = new Card();
+        boolean initialization = true;
+        boolean addingValue = false;
+        boolean careful = false;
 
         while ((checkDiscardCard = discardCard) != null) {
+
+            if ((!checkIfSameCard.toString().equals(checkDiscardCard.toString())) && !initialization && !addingValue && !careful){
+                serverAmount--;
+            }
+            careful = false;
+            addingValue = false;
+            initialization = false;
+            System.out.println("This is how many cards the server has left: " + serverAmount);
+
             for (int i = 0; i < clientCards.getCardCount(); i++){
                 System.out.println(clientCards.getSpecificCardFromDeck(i).toString());
             }
             System.out.println("This is the discard card, see if you have a match: " + checkDiscardCard.toString());
 
             //TODO: simply send out a card via text input, should be a while loop
-            //myChoiceCard = stdIn.readLine();
             boolean validText = false;
             boolean addingValidation = false;
             Card newCardIncoming = new Card();
             do {
-                //myChoiceCard = stdIn.readLine();
                 myChoiceCard = stdIn.nextLine();
                 if (myChoiceCard.equals("draw")){
                     addingValidation = true;
@@ -116,8 +126,6 @@ public class Client {
                 Card clientDrawCard = new Card(-2, "color", "image");
                 outObject.writeObject(clientDrawCard);
                 addingValidation = true;
-                //clientCards.addCard(game.getFromDrawPile());
-                //outObject.writeObject(checkDiscardCard);
             } else {
                 //TODO: try to deprecate this as the block of code above does it work, but check first
                 boolean checker = false;
@@ -143,8 +151,17 @@ public class Client {
                 if (addingValidation){
                     Card newDrawedCard = (Card) in.readObject();
                     clientCards.addCard(newDrawedCard);
+                    addingValue = true;
                 } else {
+                    checkIfSameCard = discardCard;
                     discardCard = (Card) in.readObject();
+                    if (discardCard.getCardNumber() >= 10){
+                        int temp = discardCard.getCardNumber() - 10 - 1;
+                        serverAmount += temp;
+                        outObject.writeObject(checkIfSameCard);
+                        discardCard = (Card) in.readObject();
+                        careful = true;
+                    }
                 }
             } catch (ClassNotFoundException cnfe) {
                 System.err.println("IMClient: Problem reading object: class not found");
@@ -163,7 +180,7 @@ public class Client {
 
     }
 
-    public static boolean checkUp(Card client, Card discard){
+    private static boolean checkUp(Card client, Card discard){
         if ((client.getCardNumber() == discard.getCardNumber()
                 || client.getCardColor().equals(discard.getCardColor()))
                 && (client.getAbility() == null && discard.getAbility() == null)){
