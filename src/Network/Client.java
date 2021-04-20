@@ -62,21 +62,111 @@ public class Client {
         //read in information
         //BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
         Scanner stdIn = new Scanner(System.in);
-        String fromServer;
-        String fromServerName;
         String myChoiceCard;
-        String fromUser;
-        boolean playing;
+        String wildCardChoice = null;
         Card checkDiscardCard;
         Card checkIfSameCard = new Card();
+        Card checkIfSameCard2 = new Card();
         boolean initialization = true;
         boolean addingValue = false;
         boolean careful = false;
+        boolean exit = false;
 
         while ((checkDiscardCard = discardCard) != null) {
 
-            if ((!checkIfSameCard.toString().equals(checkDiscardCard.toString())) && !initialization && !addingValue && !careful){
+            if ((!checkIfSameCard.toString().equals(checkDiscardCard.toString())) && (!checkDiscardCard.toString().equals(checkIfSameCard2.toString())) && !initialization && !addingValue && !careful){
                 serverAmount--;
+            }
+
+            if (!checkDiscardCard.toString().equals(checkIfSameCard.toString()))
+                System.out.println("Yes");
+            else
+                System.out.println("No");
+
+            if (!checkDiscardCard.toString().equals(checkIfSameCard2.toString()))
+                System.out.println("Yes");
+            else
+                System.out.println("No");
+
+            //TODO: make sure to skip this process if we get back our own card when we choose the skip/reverse feature
+            //      THIS IS FOR WHEN A SERVER SENDS IN THEIR SPECIALTY CARDS! WE HAVE TO HANDLE IT HERE
+            if (checkDiscardCard.getCardNumber() == -1 && !checkDiscardCard.toString().equals(checkIfSameCard2.toString()) && !addingValue){
+                switch (checkDiscardCard.getAbility()){
+                    case "Skip": case "Reverse":
+                        outObject.writeObject(checkDiscardCard);
+                        try {
+                            checkIfSameCard = checkDiscardCard;
+                            discardCard = (Card) in.readObject();
+                            checkDiscardCard = discardCard; //TODO: add conditions here if server adds more cards afterwards
+                            if (checkDiscardCard.getCardNumber() >= 10){
+                                int temp = checkDiscardCard.getCardNumber() - 10;
+                                serverAmount += temp;
+                                outObject.writeObject(checkIfSameCard);
+                                checkDiscardCard = (Card) in.readObject();
+                            }
+                        } catch (ClassNotFoundException cnfe){
+                            System.err.println("IMClient: Problem reading object: class not found");
+                            System.exit(1);
+                        }
+                        serverAmount--;
+                        break;
+                    case "AddTwo": //TODO: method illegal, adds two every time if we call in draw
+                        for (int i = 0; i < 2; i++){
+                            Card addTwoNewCards = new Card(-2, "color", "image");
+                            outObject.writeObject(addTwoNewCards);
+                            try{
+                                Card getBackObject = (Card) in.readObject();
+                                clientCards.addCard(getBackObject);
+                            } catch (ClassNotFoundException cnfe){
+                                System.err.println("IMClient: Problem reading object: class not found");
+                                System.exit(1);
+                            }
+                        }
+                        break;
+                    case "AddFour":
+                        for (int i = 0; i < 4; i++){
+                            Card addFourNewCards = new Card(-2, "color", "image");
+                            outObject.writeObject(addFourNewCards);
+                            try{
+                                Card getBackObject = (Card) in.readObject();
+                                clientCards.addCard(getBackObject);
+                            } catch (ClassNotFoundException cnfe){
+                                System.err.println("IMClient: Problem reading object: class not found");
+                                System.exit(1);
+                            }
+                        }
+                        if (checkDiscardCard.getCardColor().charAt(3) == 'b'){
+                            checkDiscardCard.setCardColor("Blue");
+                        } else if (checkDiscardCard.getCardColor().charAt(3) == 'r'){
+                            checkDiscardCard.setCardColor("Red");
+                        } else if (checkDiscardCard.getCardColor().charAt(3) == 'y'){
+                            checkDiscardCard.setCardColor("Yellow");
+                        } else {
+                            checkDiscardCard.setCardColor("Green");
+                        }
+                        break;
+                    case "WildCard":
+                        System.out.println("Server has choose a wild card!");
+                        if (checkDiscardCard.getCardColor().charAt(3) == 'b'){
+                            checkDiscardCard.setCardColor("Blue");
+                        } else if (checkDiscardCard.getCardColor().charAt(3) == 'r'){
+                            checkDiscardCard.setCardColor("Red");
+                        } else if (checkDiscardCard.getCardColor().charAt(3) == 'y'){
+                            checkDiscardCard.setCardColor("Yellow");
+                        } else {
+                            checkDiscardCard.setCardColor("Green");
+                        }
+                        break;
+                }
+            }
+
+            if (serverAmount == 1){
+                System.out.println("SERVER HAS AN UNO!");
+            }
+
+            if (serverAmount == 0){
+                System.out.println("You Lose!");
+                break;
             }
             careful = false;
             addingValue = false;
@@ -114,9 +204,14 @@ public class Client {
                         validText = false;
                         System.out.println("Invalid text or Card not there/found");
                     }
+                    if (newCardIncoming.getCardColor().equals("Any")){
+                        System.out.println("WildCard has been chosen, what color do you want?: ");
+                        wildCardChoice = stdIn.nextLine(); //TODO: add loop condition until they spell it right
+                    }
                 } else {
                     System.out.println("Invalid text or Card not there/found");
                 }
+
             } while (!validText);
 
 
@@ -140,12 +235,42 @@ public class Client {
                     }
                 }
 
+                if (wildCardChoice != null){
+                    switch (wildCardChoice){
+                        case "blue":
+                            newPotentialDiscardCard.setCardColor("Anyb");
+                            break;
+                        case "red":
+                            newPotentialDiscardCard.setCardColor("Anyr");
+                            break;
+                        case "yellow":
+                            newPotentialDiscardCard.setCardColor("Anyy");
+                            break;
+                        case "green":
+                            newPotentialDiscardCard.setCardColor("Anyg");
+                            break;
+                    }
+                    wildCardChoice = null;
+                }
+
+                if (newPotentialDiscardCard.getAbility() != null){
+                    if (newPotentialDiscardCard.getAbility().equals("AddTwo"))
+                        serverAmount += 2;
+                    if (newPotentialDiscardCard.getAbility().equals("AddFour"))
+                        serverAmount += 4;
+                }
 
                 //TODO: now send the info to the server for checking
                 outObject.writeObject(newPotentialDiscardCard);
+                checkIfSameCard2 = newPotentialDiscardCard;
+                if (clientCards.getCardCount() == 0){
+                    System.out.println("You Win!");
+                    exit = true;
+                }
             }
 
-
+            if (exit)
+                break;
 
             try {
                 if (addingValidation){
@@ -158,10 +283,12 @@ public class Client {
                     if (discardCard.getCardNumber() >= 10){
                         int temp = discardCard.getCardNumber() - 10 - 1;
                         serverAmount += temp;
-                        outObject.writeObject(checkIfSameCard);
+                        outObject.writeObject(checkIfSameCard); //og discard card here
                         discardCard = (Card) in.readObject();
                         careful = true;
                     }
+
+                    //TODO: say you win
                 }
             } catch (ClassNotFoundException cnfe) {
                 System.err.println("IMClient: Problem reading object: class not found");
@@ -181,9 +308,15 @@ public class Client {
     }
 
     private static boolean checkUp(Card client, Card discard){
-        if ((client.getCardNumber() == discard.getCardNumber()
-                || client.getCardColor().equals(discard.getCardColor()))
-                && (client.getAbility() == null && discard.getAbility() == null)){
+        if ((client.getCardColor().equals("Any") && !discard.getCardColor().equals("Any")) ||
+                (!client.getCardColor().equals("Any") && discard.getCardColor().equals("Any"))){
+            return true;
+        }
+
+        if ((client.getCardNumber() == discard.getCardNumber() || client.getCardColor().equals(discard.getCardColor()))){
+            if (client.getCardNumber() == -1 && discard.getCardNumber() == -1){ //if both cards are specialty, then no!
+                return false;
+            }
             return true;
         }
         return false;

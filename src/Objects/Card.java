@@ -16,6 +16,13 @@ public class Card implements Serializable {
         //nothing
     }
 
+    public Card(int cardNumber, String cardColor, String ability, String image){
+        this.cardNumber = cardNumber;
+        this.cardColor = cardColor;
+        this.ability = ability;
+        this.image = image;
+    }
+
     public Card(int cardNumber, String cardColor, String image){
         this.cardNumber = cardNumber;
         this.cardColor = cardColor;

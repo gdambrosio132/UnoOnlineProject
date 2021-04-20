@@ -94,6 +94,7 @@ public class CardDeck implements Serializable {
                 }
             }
 
+
             //insert specialty cards
             for (int k = 0; k < 3; k++){
                 cardDeckInit.add(new Card(colors[i], specialty[k], cardFileNames.get(specialCardTracker)));
@@ -101,6 +102,7 @@ public class CardDeck implements Serializable {
                 //add if-else clause as before i think
             }
         }
+
 
         for (int l = 0; l < 4; l++){
             cardDeckInit.add(new Card(otherSpecialty[l], cardFileNames.get(specialCardTracker)));

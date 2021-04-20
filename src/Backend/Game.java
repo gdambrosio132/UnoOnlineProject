@@ -6,7 +6,6 @@ import Objects.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /*
  * The point of this whole Backend.Game class is to establish the instructions of the game
@@ -17,12 +16,7 @@ import java.util.Scanner;
 
 public class Game {
     private CardDeck drawing = CardDeck.initializeDeck(); //this is the drawing pile
-    //private CardDeck presentDeck = new CardDeck();
     private CardDeck discard = new CardDeck(); //this is our dump pile
-    private int turn = 0;
-    private int turnCount = 0;
-    private int direction = 1;
-    private boolean action = false;
     private List<Player> players = new ArrayList<Player>();
     private boolean playing = false;
     private CardDeck server;
@@ -118,62 +112,6 @@ public class Game {
         server = cardDeck;
     }
 
-
-    public void turn(){
-        turnCount++;
-        if (turnCount <= 0){
-            turn = players.size();
-        }
-
-        //TODO: This signals that it is a wild card
-        //      FILL IN THE LOGIC
-        if (getTopDiscard().getCardNumber() == -1){
-            switch(discard.displayFrontalCard().getAbility()){
-                case "Skip":
-                    //Action is performed, player goes again
-                    break;
-
-                case "Reverse":
-                    //this is lowkey useless since we are having two players lol
-                    break;
-
-                case "AddTwo":
-                    //give the opponent two cards from the deck regardless
-                    break;
-
-                case "AddFour":
-                    //give them four cards if and only if they can't back themselves up with similar colors
-                    break;
-
-                case "WildCard":
-                    //the wild card is to change the motto of the game, different color and must match
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        Player currentPlayer = players.get(turn % players.size());
-        boolean inTurn = true;
-        boolean drew = false;
-        boolean showInfo = true;
-        Card last = getTopDiscard(); //this gets us a peek of the card to match
-
-        //TODO: IMPORTANT - we dont want to include double down feature such as one wild card over the other, too much work
-        //                  stick with one wild card and one draw at a time
-        while(inTurn){
-            //TODO: if the card is a wild card, check that first, probably not in the first condition
-            //      since we purposely said no wild card first in the first instance
-            if (last.getCardNumber() == -1){
-                //TODO: this is busy work, figure out logistics later
-            } else {
-                //TODO: NOW!
-
-            }
-        }
-    }
-
     public void putInCardInDiscardPile(Card card){
         Card newCard = discard.removeFirstCard();
         drawing.addCard(newCard);
@@ -193,15 +131,16 @@ public class Game {
     }
 
     public boolean regularLegalStatus(Card card){
-        if (card.getCardNumber() == peekAtTopCardDiscard().getCardNumber() || card.getCardColor().equals(peekAtTopCardDiscard().getCardColor())){
+        if ((card.getCardColor().equals("Any") && !peekAtTopCardDiscard().getCardColor().equals("Any")) ||
+                (!card.getCardColor().equals("Any") && peekAtTopCardDiscard().getCardColor().equals("Any"))){
             return true;
         }
-        return false;
-    }
 
-    public boolean advanceLegalStatus(Card card){
-        if (card.getCardColor().equals(getTopDiscard().getCardColor())){
-
+        if (card.getCardNumber() == peekAtTopCardDiscard().getCardNumber() || card.getCardColor().equals(peekAtTopCardDiscard().getCardColor())){
+            if (card.getCardNumber() == -1 && peekAtTopCardDiscard().getCardNumber() == -1){ //if both cards are specialty, then no!
+                return false;
+            }
+            return true;
         }
         return false;
     }
@@ -213,36 +152,12 @@ public class Game {
         }
     }
 
-
     public boolean isPlaying(){
         return playing;
     }
 
     public Card getFromDrawPile(){
         return drawing.draw();
-    }
-
-    public String processInput(String theInput) {
-        String theOutput = null;
-        //System.out.print("Server:");
-        Scanner scan = new Scanner(System.in);
-        /*
-        if (state == WAITING) {
-            theOutput = "Connection Established!";
-            //start deck and give cards to players here
-
-            state = IN_GAMEPLAY;
-        } else if (state == IN_GAMEPLAY) {
-
-            System.out.print("Server: ");
-            theOutput =scan.nextLine();
-        } else {
-            theOutput = "Bye.";
-            state = WAITING;
-        }*/
-
-        theOutput = scan.nextLine();
-        return theOutput;
     }
 
 }
