@@ -71,10 +71,12 @@ public class GameMultiServerThread extends Thread {
 
                 //TODO: Check the specialty cards here
 
+                /*
                 if (!checkIfSameCard.toString().equals(clientCard.toString()))
                     System.out.println("Yes");
                 else
                     System.out.println("No");
+                */
 
                 if(checkIfSameCard.toString().equals(clientCard.toString()) && clientCard.getCardNumber() == -1)
                     opertationSpecialty = true;

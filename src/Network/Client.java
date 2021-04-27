@@ -78,6 +78,7 @@ public class Client {
                 serverAmount--;
             }
 
+            /*
             if (!checkDiscardCard.toString().equals(checkIfSameCard.toString()))
                 System.out.println("Yes");
             else
@@ -87,6 +88,7 @@ public class Client {
                 System.out.println("Yes");
             else
                 System.out.println("No");
+            */
 
             //TODO: make sure to skip this process if we get back our own card when we choose the skip/reverse feature
             //      THIS IS FOR WHEN A SERVER SENDS IN THEIR SPECIALTY CARDS! WE HAVE TO HANDLE IT HERE
