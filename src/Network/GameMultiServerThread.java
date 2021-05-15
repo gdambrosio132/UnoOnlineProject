@@ -1,6 +1,8 @@
 package Network;
 
 import Backend.Game;
+import Backend.UnoGameServerController;
+import Backend.UnoGameThreadController;
 import Objects.Card;
 import Objects.CardDeck;
 
@@ -9,6 +11,7 @@ import Objects.CardDeck;
 //      UPDATE: MAYBE NOT
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GameMultiServerThread extends Thread {
@@ -20,13 +23,12 @@ public class GameMultiServerThread extends Thread {
         this.socket = socket;
     }
 
+
     public void run() {
         try {
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 
-            String inputLine, inputLineName, outputLine;
-            Card inputCard, outputCard;
             Card checkIfSameCard = new Card();
 
             game = new Game();
@@ -39,15 +41,26 @@ public class GameMultiServerThread extends Thread {
             boolean drawingAfterSkipping = false;
 
             System.out.println("Server Cards:");
+            ArrayList<String> initCards = new ArrayList<String>();
             for (int i = 0; i < serverCards.getCardCount(); i++){
+                initCards.add(serverCards.getSpecificCardFromDeck(i).getImage());
                 System.out.println(serverCards.getSpecificCardFromDeck(i).toString());
             }
+
+            for (String i : initCards){
+                System.out.println(i);
+            }
+
+            //insert Initial player cards here for testing
+            UnoGameServerController.initPlayerCards(initCards);
+            UnoGameServerController.initDiscardCard(discardPileTop.getImage());
 
             //TODO: we send in the client its cards that it has to work with
             //      therefore the client must put these cards in its own data deck
             out.writeObject(clientCards);
 
             out.writeObject(discardPileTop);
+            UnoGameServerController.togglePlayerTurn(false);
             //TODO: read in back what the client has sent in to be the potential new discard top deck card
             Card clientCard = (Card) in.readObject();
 
@@ -61,6 +74,7 @@ public class GameMultiServerThread extends Thread {
                     clientCard = game.getFromDrawPile();
                     clientCards.addCard(clientCard);// this is for our side visual and game info
                     out.writeObject(clientCard);
+                    UnoGameServerController.updateEnemyCardAmount(clientCards.getCardCount());
                     try {
                         clientCard = (Card) in.readObject();
                     }catch (ClassNotFoundException cnfe){
@@ -88,6 +102,8 @@ public class GameMultiServerThread extends Thread {
                             game.putInCardInDiscardPile(clientCard);
                             out.writeObject(clientCard);//TODO: this is an error, maybe not
                             game.putInCardInDrawingPile(clientCard);
+                            UnoGameServerController.initDiscardCard(clientCard.getImage());
+                            UnoGameServerController.updateEnemyCardAmount(clientCards.getCardCount());
                             try {
                                 clientCard = (Card) in.readObject();
                                 while (clientCard.getCardNumber() == -2){
@@ -96,6 +112,7 @@ public class GameMultiServerThread extends Thread {
                                     clientCard = game.getFromDrawPile();
                                     clientCards.addCard(clientCard);// this is for our side visual and game info
                                     out.writeObject(clientCard);
+                                    UnoGameServerController.updateEnemyCardAmount(clientCards.getCardCount());
                                     try {
                                         clientCard = (Card) in.readObject();
                                     }catch (ClassNotFoundException cnfe){
@@ -111,12 +128,14 @@ public class GameMultiServerThread extends Thread {
                             }
                             break;
                         case "AddTwo":
-                            for (int i = 0; i < 2; i++)
+                            for (int i = 0; i < 2; i++){
                                 serverCards.addCard(game.getFromDrawPile());
+                            }
                             break;
                         case "AddFour":
-                            for (int i = 0; i < 4; i++)
+                            for (int i = 0; i < 4; i++){
                                 serverCards.addCard(game.getFromDrawPile());
+                            }
                             Card test2 = new Card(clientCard);
                             test2.setCardColor("Any");
                             test2.setAbility("AddFour");
@@ -129,13 +148,18 @@ public class GameMultiServerThread extends Thread {
                             game.removeCardFromClientDeck(removerCardForClientAdding);
                             if (clientCard.getCardColor().charAt(3) == 'b'){ //TODO: for some reason, if client draws after, it goes to green
                                 clientCard.setCardColor("Blue");
+                                UnoGameServerController.setWildCardDisplay("Blue");
                             } else if (clientCard.getCardColor().charAt(3) == 'r'){
                                 clientCard.setCardColor("Red");
+                                UnoGameServerController.setWildCardDisplay("Red");
                             } else if (clientCard.getCardColor().charAt(3) == 'y'){
                                 clientCard.setCardColor("Yellow");
+                                UnoGameServerController.setWildCardDisplay("Yellow");
                             } else {
                                 clientCard.setCardColor("Green");
+                                UnoGameServerController.setWildCardDisplay("Green");
                             }
+                            UnoGameServerController.toggleWildCardDisplay(true);
                             opertationSpecialty = true;
                             break;
                         case "WildCard":
@@ -152,13 +176,18 @@ public class GameMultiServerThread extends Thread {
                             game.removeCardFromClientDeck(removerCardForClient);
                             if (clientCard.getCardColor().charAt(3) == 'b'){ //TODO: for some reason, if client draws after, it goes to green
                                 clientCard.setCardColor("Blue");
+                                UnoGameServerController.setWildCardDisplay("Blue");
                             } else if (clientCard.getCardColor().charAt(3) == 'r'){
                                 clientCard.setCardColor("Red");
+                                UnoGameServerController.setWildCardDisplay("Red");
                             } else if (clientCard.getCardColor().charAt(3) == 'y'){
                                 clientCard.setCardColor("Yellow");
+                                UnoGameServerController.setWildCardDisplay("Yellow");
                             } else {
                                 clientCard.setCardColor("Green");
+                                UnoGameServerController.setWildCardDisplay("Green");
                             }
+                            UnoGameServerController.toggleWildCardDisplay(true);
                             opertationSpecialty = true;
                             break;
                     }
@@ -175,6 +204,12 @@ public class GameMultiServerThread extends Thread {
                     System.out.println(serverCards.getSpecificCardFromDeck(i).toString());
                 }
 
+
+                UnoGameServerController.updatePlayerCardAmount(game.getServerCardDeck().getCardCount());
+                UnoGameServerController.initPlayerCards(game.getStringCardDeckArrayList(game.getServerCardDeck()));
+                UnoGameServerController.initDiscardCard(clientCard.getImage());
+                UnoGameServerController.setDrawnCardReserved(game.peekDrawingDeckCard().getImage());
+
                 if (drawingAfterSkipping){
                     opertationSpecialty = false;
                     drawingAfterSkipping = false;
@@ -187,6 +222,7 @@ public class GameMultiServerThread extends Thread {
                                                            //   card from the client deck even though it was in the server deck, so its an error
                 clientCards = game.getClientCardDeck();
                 System.out.println("The client has this many cards left: " + clientCards.getCardCount());
+                UnoGameServerController.updateEnemyCardAmount(clientCards.getCardCount());
                 if (clientCards.getCardCount() == 1){
                     System.out.println("CLIENT HAS AN UNO!");
                 }
@@ -199,7 +235,7 @@ public class GameMultiServerThread extends Thread {
                     break;
                 }
 
-
+                UnoGameServerController.togglePlayerTurn(true);
                 System.out.println("Match the discard pile: " + clientCard.toString());
 
                 game.putInCardInDiscardPile(clientCard);
@@ -210,9 +246,16 @@ public class GameMultiServerThread extends Thread {
                 boolean validText = false;
                 int adding = 0;
                 do {
-                    potential = stdIn.nextLine();
+                    if (UnoGameServerController.checkIfDrawnButtonOnClick()){
+                        potential = "draw";
+                    } else {
+                        potential = stdIn.nextLine();
+                    }
                     while (potential.equals("draw")){
                         serverCards.addCard(game.getFromDrawPile());
+                        initCards.add(serverCards.getSpecificCardFromDeck(serverCards.getCardCount() - 1).getImage());
+                        UnoGameServerController.updatePlayerCardAmount(serverCards.getCardCount());
+                        UnoGameServerController.initPlayerCards(initCards);
                         adding++;
                         System.out.println("Server Cards:");
                         for (int i = 0; i < serverCards.getCardCount(); i++){
@@ -294,6 +337,16 @@ public class GameMultiServerThread extends Thread {
                 game.putInCardInDiscardPile(newPotentialDiscardCard);
                 game.putInCardInDrawingPile(clientCard);
                 out.writeObject(newPotentialDiscardCard);
+                UnoGameServerController.togglePlayerTurn(false);
+
+                initCards.remove(newPotentialDiscardCard.getImage());
+                //this might cause an error
+                UnoGameServerController.updateEnemyCardAmount(game.getClientCardDeck().getCardCount());
+                UnoGameServerController.updatePlayerCardAmount(game.getServerCardDeck().getCardCount());
+                UnoGameServerController.initPlayerCards(game.getStringCardDeckArrayList(game.getServerCardDeck()));
+                UnoGameServerController.initDiscardCard(newPotentialDiscardCard.getImage());
+                UnoGameServerController.toggleWildCardDisplay(false);
+                //UnoGameThreadController.initPlayerCards(game.getStringCardDeckArray(game.getServerCardDeck()));
                 checkIfSameCard = newPotentialDiscardCard;
 
                 //TODO: test to see our drawing card pile
@@ -301,6 +354,7 @@ public class GameMultiServerThread extends Thread {
 
                 try {
                     clientCard = (Card) in.readObject();
+                    //UnoGameThreadController.initDiscardCard(clientCard.getImage());
                 } catch (ClassNotFoundException cnfe){
                     System.err.println("IMClient: Problem reading object: class not found");
                     System.exit(1);

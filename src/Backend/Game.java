@@ -105,7 +105,17 @@ public class Game {
 
     //TODO: DONT USE THIS METHOD
     public void removeCardFromServerDeck(Card c){
-        server.removeSpecificCardFromDeck(1);
+        int i = getServerCardIndex(client, c);
+        server.removeSpecificCardFromDeck(i);
+    }
+
+    private int getServerCardIndex(CardDeck cardDeck, Card card){
+        for (int i = 0; i < cardDeck.getCardCount(); i++){
+            if (cardDeck.getSpecificCardFromDeck(i).toString().equals(card.toString())){
+                return i;
+            }
+        }
+        return -1;
     }
 
     public void updateServerDeck(CardDeck cardDeck){
@@ -116,6 +126,27 @@ public class Game {
         Card newCard = discard.removeFirstCard();
         drawing.addCard(newCard);
         discard.addCard(card);
+    }
+
+    public String[] getStringCardDeckArray(CardDeck cardDeck){
+        String[] temp = new String[cardDeck.getCardCount()];
+        for (int i = 0; i < temp.length; i++){
+            temp[i] = cardDeck.getSpecificCardFromDeck(i).getImage();
+        }
+        return temp;
+    }
+
+    public ArrayList<String> getStringCardDeckArrayList(CardDeck cardDeck){
+        ArrayList<String> temp = new ArrayList<String>();
+        for (int i = 0; i < cardDeck.getCardCount(); i++){
+            temp.add(cardDeck.getSpecificCardFromDeck(i).getImage());
+        }
+
+        return temp;
+    }
+
+    public Card peekDrawingDeckCard(){
+        return drawing.displayFrontalCard();
     }
 
     public void putInCardInDrawingPile(Card c){

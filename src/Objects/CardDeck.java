@@ -16,7 +16,7 @@ public class CardDeck implements Serializable {
     private List<Card> cardDeck;
     private static String[] colors = {"Red", "Yellow", "Green", "Blue", "Any"};
     private static String[] specialty = {"Skip", "Reverse", "AddTwo"};
-    private static String[] otherSpecialty = {"AddFour", "AddFour", "WildCard", "WildCard"};
+    private static String[] otherSpecialty = {"WildCard", "WildCard", "AddFour", "AddFour"};
     //No need for any other constructor as we are merely just creating a stack of default cards
     //maybe the operations take place here when we need it to be
 

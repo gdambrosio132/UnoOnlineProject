@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #ff3300;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Backend.UnoGameClientController">
+<right>
+<ImageView fx:id="drawingImage" fitHeight="150.0" fitWidth="102.0" onMouseClicked="#drawOnAction" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+    <image>
+        <Image url="@../../images/UnoBackSide.png" />
+    </image></ImageView>
+</right>
+<bottom>
+<HBox fx:id="playerHbox" prefHeight="136.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+</bottom>
+<top>
+<HBox fx:id="enemyHbox" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+</top>
+<left>
+<Button mnemonicParsing="false" text="Button" BorderPane.alignment="CENTER" />
+</left>
+   <center>
+      <VBox fx:id="vbox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="enemyTurnLabel" text="Enemies Turn">
+               <font>
+                  <Font name="System Bold" size="30.0" />
+               </font>
+            </Label>
+            <ImageView fx:id="discardPile" fitHeight="150.0" fitWidth="102.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="myTurnLabel" text="Your Turn">
+               <font>
+                  <Font name="System Bold" size="30.0" />
+               </font>
+            </Label>
+            <Label fx:id="wildCardOption" text="WildCard:">
+               <font>
+                  <Font name="System Bold" size="30.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
