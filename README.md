@@ -98,14 +98,14 @@ Description: Here is displayed our use-case diagram which establishes the narrow
 For our Uno game to function as intended, we therefore need to set a basis of functional requirements so that we can ensure that this software will be useful to our clients. Below is a drop down list of various functional requirements for users:
 
 1. A user should be presented with a responsive user interface for navigation and playing.
-2. A user can create or join a game .
+2. A user can join a game .
 3. A user should be able to overall, play the game Uno, with all of its features and of course, be in the style of a game to either win or lose.
-4. A user should be able check on their statistics along with others statistics on wins and losses.
+4. A user should be able check on their statistics such as how many cards they or the enemy has.
 
 	As we progress through the basis for our user functional requirements, we then move onto the functional requirements for our server side of our application. Below is a drop down list of various functional requirements for the server:
-1. Server should always be running 24/7
-2. The server thread determines how the game is played amongst its joined users.
-3. The server thread must initialize the game once all clients are joined in.
+1. Server should always be running 24/7, meaning it is a multithreaded server.
+2. The server thread determines how the game is played among the joined user.
+3. The server thread must initialize the game once the client are joined in.
 
 	When it comes to creating an online Uno game, it is very important to have first the frontend design done and out of the way, then creating all the logistics of how an Uno game works, and finally, making sure that a valid game can be played from a connection over a network between various users and the server itself. With that said, we move over to the non-functional requirements.
 
