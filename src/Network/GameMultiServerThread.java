@@ -44,11 +44,6 @@ public class GameMultiServerThread extends Thread {
             ArrayList<String> initCards = new ArrayList<String>();
             for (int i = 0; i < serverCards.getCardCount(); i++){
                 initCards.add(serverCards.getSpecificCardFromDeck(i).getImage());
-                System.out.println(serverCards.getSpecificCardFromDeck(i).toString());
-            }
-
-            for (String i : initCards){
-                System.out.println(i);
             }
 
             //insert Initial player cards here for testing
@@ -83,14 +78,6 @@ public class GameMultiServerThread extends Thread {
                     }
                 }
 
-                //TODO: Check the specialty cards here
-
-                /*
-                if (!checkIfSameCard.toString().equals(clientCard.toString()))
-                    System.out.println("Yes");
-                else
-                    System.out.println("No");
-                */
 
                 if(checkIfSameCard.toString().equals(clientCard.toString()) && clientCard.getCardNumber() == -1)
                     opertationSpecialty = true;
@@ -193,11 +180,6 @@ public class GameMultiServerThread extends Thread {
                     }
                 }
 
-                /*
-                System.out.println("Client Cards:");
-                for (int i = 0; i < clientCards.getCardCount(); i++){
-                    System.out.println(clientCards.getSpecificCardFromDeck(i).toString());
-                }*/
 
                 System.out.println("Server Cards:");
                 for (int i = 0; i < serverCards.getCardCount(); i++){
@@ -346,7 +328,6 @@ public class GameMultiServerThread extends Thread {
                 UnoGameServerController.initPlayerCards(game.getStringCardDeckArrayList(game.getServerCardDeck()));
                 UnoGameServerController.initDiscardCard(newPotentialDiscardCard.getImage());
                 UnoGameServerController.toggleWildCardDisplay(false);
-                //UnoGameThreadController.initPlayerCards(game.getStringCardDeckArray(game.getServerCardDeck()));
                 checkIfSameCard = newPotentialDiscardCard;
 
                 //TODO: test to see our drawing card pile
