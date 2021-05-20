@@ -89,7 +89,9 @@ For our enhanced version, we go over the UI experience of our game. This means t
 
 ### Use Case Diagram
 
-insert it here
+<img src="https://github.com/gdambrosio132/UnoOnlineProject/blob/master/images/UnoCaseDiagramDiagram.png" alt="alt text" width="800">
+
+Description: Here is displayed our use-case diagram which establishes the narrow-down version of our application. Our two main actors are our player (client) and our game server. The host client is an extension of our player and gets more added functionality and the game server thread works in the format of performing a lot more functions than the game server. This version contains functional and non-functional requirements all mixed.
 
 ### Functional Requirements
 
@@ -192,7 +194,7 @@ A restriction that arose was though we created a multiplayer game, it is a game 
 
 ### UML Diagram
 
-insert UML Diagram in here
+<img src="https://github.com/gdambrosio132/UnoOnlineProject/blob/master/images/UMLUno2.png" alt="alt text" width="800">
 
 
 ## Screenshots
